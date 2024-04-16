@@ -1,6 +1,6 @@
 version 1.0
 
-workflow MultiScaleFootprintingWorkflow{
+workflow wf_multi_scale_footprinting{
     meta{
         version: 'v0.1'
         author: 'Zhijian Li'
@@ -12,16 +12,15 @@ workflow MultiScaleFootprintingWorkflow{
     input {
         File fragment_file
         File bed_file
-        String ref_genome = "hg38"
-        Int fp_scale = 10
+        String ref_genome
+        Int fp_scale
 
         # optional input
         File? barcode_groups
         String? project_name = "PROJECT" 
-    
     }
 
-    call MultiScaleFootprinting { 
+    call task_multi_scale_footprinting { 
         input: 
             fragment_file = fragment_file,
             bed_file = bed_file,
@@ -33,12 +32,12 @@ workflow MultiScaleFootprintingWorkflow{
 
 }
 
-task MultiScaleFootprinting{
+task task_multi_scale_footprinting{
     input{
         File fragment_file
         File bed_file
-        String ref_genome = "hg38"
-        Int fp_scale = 10
+        String ref_genome
+        Int fp_scale
 
         # optional input
         File? barcode_groups
@@ -48,7 +47,6 @@ task MultiScaleFootprinting{
     command{
         set -e
 
-        # Perform footprinting
         Rscript /home/shareseq/PRINT/code/run_PRINT.R \
         --project_name ${project_name} \
         --fragment_file ${fragment_file} \
@@ -61,6 +59,7 @@ task MultiScaleFootprinting{
 
     output{
         File footprint_file = "footprint.bed"
+        File footprint_score_file = "footprint_score.bw"
     }
 
     runtime {
