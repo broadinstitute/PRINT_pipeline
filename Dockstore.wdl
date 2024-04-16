@@ -23,10 +23,10 @@ workflow MultiScaleFootprintingWorkflow{
 
     call MultiScaleFootprinting { 
         input: 
-            fragment_file = fragment_file, 
+            fragment_file = fragment_file,
             bed_file = bed_file,
             ref_genome = ref_genome,
-            fp_scale = fp_scale
+            fp_scale = fp_scale,
             barcode_groups = barcode_groups,
             project_name = project_name
     }
