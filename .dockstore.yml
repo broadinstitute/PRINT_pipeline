@@ -5,3 +5,8 @@ workflows:
     primaryDescriptorPath: /print.wdl
     authors: "Zhijian Li"
     topic: Performing multi-scale footprinting
+    filters:  # Only develop or master branches and localAligner/** tags
+         branches:
+             - main
+         tags:
+             - /.*/
