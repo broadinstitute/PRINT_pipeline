@@ -1,0 +1,7 @@
+version: 1.2
+workflows:
+  - name: "MultiScaleFootprintingWorkflow"
+    subclass: WDL
+    primaryDescriptorPath: /print.wdl
+    authors: "Zhijian Li"
+    topic: Performing multi-scale footprinting
