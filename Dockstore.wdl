@@ -62,9 +62,10 @@ task MultiScaleFootprinting{
     output{
         File footprint_file = "footprint.bed"
     }
+
     runtime {
         # Pull this docker image from the `quay.io` registry
         docker: "lzj1769/print"
-        memory: mem_gb + "GB"
+        memory: "20GB"
     }
 }
