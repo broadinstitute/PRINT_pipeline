@@ -13,47 +13,57 @@ LABEL software.organization="Broad Institute of MIT and Harvard"
 LABEL software.version.is-production="No"
 LABEL software.task="multi scaling TF footprinting"
 
-ARG CONDA_PYTHON_VERSION=3
-ARG CONDA_DIR=/opt/conda
-ARG USERNAME=docker
-ARG USERID=1000
+## Create new user 
+ENV USER=shareseq
+WORKDIR /home/$USER
+RUN groupadd -r $USER && \
+    useradd -r -g $USER --home /home/$USER -s /sbin/nologin -c "Docker image user" $USER &&\
+    chown $USER:$USER /home/$USER
 
-# Instal basic utilities
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends git wget unzip bzip2 sudo build-essential ca-certificates && \
+#key signing issue with cuda repo can be fixed by removing from apt sources and re-adding in apt-get update 
+RUN rm /etc/apt/sources.list.d/cuda.list
+
+# Install some basic utilities
+RUN apt-get update --fix-missing && \
+    apt-get install -y --allow-unauthenticated wget bzip2 ca-certificates curl git jq libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+    
+# Install Miniconda with Python 3.9 into /opt
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_24.1.2-0-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda && \
+    rm ~/miniconda.sh
 
-# Install miniconda
-ENV PATH $CONDA_DIR/bin:$PATH
-RUN wget --quiet https://repo.continuum.io/miniconda/Miniconda$CONDA_PYTHON_VERSION-latest-Linux-x86_64.sh -O /tmp/miniconda.sh && \
-    echo 'export PATH=$CONDA_DIR/bin:$PATH' > /etc/profile.d/conda.sh && \
-    /bin/bash /tmp/miniconda.sh -b -p $CONDA_DIR && \
-    rm -rf /tmp/*
+# Enable Conda and alter bashrc so the Conda default environment is always activated
+RUN ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+    echo "conda activate base" >> ~/.bashrc 
 
-# Create the user
-RUN useradd --create-home -s /bin/bash --no-user-group -u $USERID $USERNAME && \
-    chown $USERNAME $CONDA_DIR -R && \
-    adduser $USERNAME sudo && \
-    echo "$USERNAME ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+# Attach Conda to PATH
+ENV PATH /opt/conda/bin:$PATH
 
-USER $USERNAME
-WORKDIR /home/$USERNAME
+# Install R packages
+RUN conda install -y python=3.10 r-base=4.3 -c conda-forge
+RUN conda install -y conda-forge::r-scales
+RUN conda install -y conda-forge::r-dplyr
+RUN conda install -y conda-forge::r-reticulate
+RUN conda install -y conda-forge::r-ggplot2
+RUN conda install -y conda-forge::r-gtools
+RUN conda install -y conda-forge::r-hdf5r
+RUN conda install -y conda-forge::r-getopt
+RUN conda install -y conda-forge::r-optparse
+RUN conda install -y bioconda::bioconductor-genomicranges
+RUN conda install -y bioconda::bioconductor-summarizedexperiment
 
-# Install mamba
-RUN conda install -y mamba -c conda-forge
+RUN conda clean -tipy
 
-# ADD ./environment.yml .
-# RUN mamba env update --file ./environment.yml && conda clean -tipy
-
-# For interactive shell
-# RUN conda init bash
-# RUN echo "conda activate base" >> /home/$USERNAME/.bashrc
+# Install Python packages
+RUN pip install keras
 
 # Copy the entire repo
-# RUN mkdir /scratch/PRINT
-# COPY ./code /scratch/PRINT
+RUN mkdir -p /home/$USER/PRINT/code
+RUN mkdir -p /home/$USER/PRINT/shared_data
 
-# COPY ./data /scratch/PRINT
-# Rscript /scratch/PRINT/code/run_PRINT.R --help
+COPY ./code /home/$USER/PRINT/code
+COPY ./shared_data /home/$USER/PRINT/shared_data
 

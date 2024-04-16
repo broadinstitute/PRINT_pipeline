@@ -1,12 +1,12 @@
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/utils.R"))
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/getCounts.R"))
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/getBias.R"))
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/getFootprints.R"))
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/getSubstructures.R"))
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/visualization.R"))
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/getGroupData.R"))
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/footprintTracking.R"))
-suppressMessages(source("/data/pinello/PROJECTS/2024_04_ZL_PRINT/PRINT/code/getTFBS.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/utils.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/getCounts.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/getBias.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/getFootprints.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/getSubstructures.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/visualization.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/getGroupData.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/footprintTracking.R"))
+suppressMessages(source("/home/shareseq/PRINT/code/getTFBS.R"))
 
 suppressMessages(library(optparse))
 
@@ -29,11 +29,13 @@ option_list = list(
                 help="Reference genome. Available options: hg38, mm10. Default: hg38", 
                 metavar="character"),
     
-    make_option(c("--disp_model_dir"), type="character", default="NULL", 
+    make_option(c("--disp_model_dir"), type="character", 
+                default="/home/shareseq/PRINT/shared_data/dispModel", 
                 help="Directory of dispersion models. Default: NULL", 
                 metavar="character"),    
     
-    make_option(c("--tf_model"), type="character", default="NULL", 
+    make_option(c("--tf_model"), type="character", 
+                default="/home/shareseq/PRINT/shared_data/TFBSPrediction/TFBS_model.h5", 
                 help="Path of TFBS prediction models. Default: NULL", 
                 metavar="character"), 
     

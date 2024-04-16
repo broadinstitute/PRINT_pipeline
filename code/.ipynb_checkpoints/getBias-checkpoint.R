@@ -104,8 +104,7 @@ setMethod("getPrecomputedBias",
             referenceGenome <- refGenome(project)
             availableGenomes <- c("ce11","danRer11","dm6","hg19","hg38","mm10","panTro6","sacCer3")
             if(referenceGenome %in% availableGenomes){
-              # h5_path <- paste0("../../data/shared/precomputedTn5Bias/", referenceGenome, "Tn5Bias.h5")
-                h5_path <- paste0(Tn5BiasDir, "/", referenceGenome, "Tn5Bias.h5")
+                h5_path <- file.path(Tn5BiasDir, referenceGenome, "Tn5Bias.h5.gz")
             }else{
               stop("Specified reference genome is not available!")
             }
